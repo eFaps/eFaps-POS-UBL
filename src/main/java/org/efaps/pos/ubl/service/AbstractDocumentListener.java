@@ -248,6 +248,9 @@ public abstract class AbstractDocumentListener
     {
         String ret;
         switch (_key) {
+            case "Establecimiento":
+                ret = configProps.getEstablecimiento();
+                break;
             default:
                 ret = null;
                 break;

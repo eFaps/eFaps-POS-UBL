@@ -30,6 +30,8 @@ public class ConfigProps
 
     private String ublPath;
 
+    private String establecimiento;
+
     public Certificate getCertificate()
     {
         return certificate;
@@ -53,6 +55,17 @@ public class ConfigProps
     public void setUblPath(final String ublPath)
     {
         this.ublPath = ublPath;
+    }
+
+    public String getEstablecimiento()
+    {
+        return establecimiento;
+    }
+
+
+    public void setEstablecimiento(final String establecimiento)
+    {
+        this.establecimiento = establecimiento;
     }
 
     public static class Certificate
