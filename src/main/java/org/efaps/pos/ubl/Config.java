@@ -32,7 +32,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @Configuration("UBL-Config")
 @EnableConfigurationProperties(value = { ConfigProps.class })
 @ComponentScan("org.efaps.pos.ubl")
-@EnableMongoRepositories("org.efaps.pos.ubl")
+@EnableMongoRepositories("org.efaps.pos.ubl.repository")
 public class Config
 {
 
