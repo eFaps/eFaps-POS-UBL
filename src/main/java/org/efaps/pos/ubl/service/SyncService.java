@@ -76,7 +76,7 @@ public class SyncService
 
     private void sync()
     {
-        LOG.info("Syncing Bizlinks-EInvoices");
+        LOG.info("Syncing UBL-EInvoices");
         for (final var eInvoice : eInvoiceRepository.findByOidIsNull()) {
             try {
                 final var docOidOpt = getDocOid(eInvoice);
@@ -97,7 +97,7 @@ public class SyncService
                     }
                 }
             } catch (final RestClientException | IdentException e) {
-                LOG.error("Catched error during post for Bizlinks-EInvoices", e);
+                LOG.error("Catched error during post for UBL-EInvoices", e);
             }
         }
     }
