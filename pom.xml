@@ -27,7 +27,7 @@
     </parent>
     <packaging>jar</packaging>
     <artifactId>efaps-pos-ubl</artifactId>
-    <version>0.9.1</version>
+    <version>1.0.0</version>
     <properties>
         <spring.boot.version>2.5.0</spring.boot.version>
     </properties>

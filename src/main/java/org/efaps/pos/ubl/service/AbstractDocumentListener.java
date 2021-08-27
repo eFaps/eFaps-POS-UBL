@@ -48,7 +48,9 @@ import org.efaps.ubl.documents.AbstractDocument;
 import org.efaps.ubl.documents.Customer;
 import org.efaps.ubl.documents.IAllowanceChargeEntry;
 import org.efaps.ubl.documents.ICustomer;
+import org.efaps.ubl.documents.IInstallment;
 import org.efaps.ubl.documents.ILine;
+import org.efaps.ubl.documents.IPaymentTerms;
 import org.efaps.ubl.documents.ITaxEntry;
 import org.efaps.ubl.documents.Line;
 import org.efaps.ubl.documents.Supplier;
@@ -90,7 +92,28 @@ public abstract class AbstractDocumentListener
                         .withSupplier(getSupplier(_properties))
                         .withTaxes(getTaxes(_document.getTaxes(), _properties))
                         .withAllowancesCharges(allowancesCharges)
-                        .withLines(getLines(items, _properties));
+                        .withLines(getLines(items, _properties))
+                        .withPaymentTerms(new IPaymentTerms()
+                        {
+
+                            @Override
+                            public boolean isCredit()
+                            {
+                                return false;
+                            }
+
+                            @Override
+                            public BigDecimal getTotal()
+                            {
+                                return _document.getCrossTotal();
+                            }
+
+                            @Override
+                            public List<IInstallment> getInstallments()
+                            {
+                                return null;
+                            }
+                        });
         return ubl.getUBLXml();
     }
 
