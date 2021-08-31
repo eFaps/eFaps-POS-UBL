@@ -81,7 +81,7 @@ public abstract class AbstractDocumentListener
     protected String getUBL(final IDocument _document, final Set<? extends IItem> items, final AbstractDocument<?> ubl,
                             final Map<String, String> _properties)
     {
-        final var allowancesCharges = getCharges(_document.getTaxes(), _properties);
+        final var allowancesCharges = getCharges(_document.getTaxes(), false, _properties);
         allowancesCharges.addAll(getAllowances(items));
         ubl.withNumber(_document.getNumber())
                         .withCurrency(_document.getCurrency())
@@ -162,7 +162,7 @@ public abstract class AbstractDocumentListener
                                 .withCrossPrice(item.getCrossPrice())
                                 .withUoMCode(item.getUoMCode())
                                 .withTaxEntries(getTaxes(item.getTaxes(), _properties))
-                                .withAllowancesCharges(getCharges(item.getTaxes(), _properties))
+                                .withAllowancesCharges(getCharges(item.getTaxes(), true, _properties))
                                 .build());
             }
         }
@@ -205,6 +205,7 @@ public abstract class AbstractDocumentListener
     }
 
     protected List<IAllowanceChargeEntry> getCharges(final Set<TaxEntryDto> taxes,
+                                                     final boolean isItem,
                                                      final Map<String, String> _properties)
     {
         final var ret = new ArrayList<IAllowanceChargeEntry>();
@@ -212,13 +213,16 @@ public abstract class AbstractDocumentListener
             final var taxKey = entry.getTax().getKey();
             if (_properties.containsKey("charge." + taxKey + ".id")) {
                 final var id = _properties.get("charge." + taxKey + ".id");
-                ret.add(ChargeEntry.builder()
-                                .withAmount(entry.getAmount())
-                                .withBaseAmount(entry.getBase())
-                                .withReason(id)
-                                .withFactor(entry.getTax().getPercent()
-                                                .setScale(2).divide(new BigDecimal(100), RoundingMode.HALF_UP))
-                                .build());
+                final var isGlobal = "true".equalsIgnoreCase(_properties.get("charge." + taxKey + ".global"));
+                if (!(isGlobal && isItem)) {
+                    ret.add(ChargeEntry.builder()
+                                    .withAmount(entry.getAmount())
+                                    .withBaseAmount(entry.getBase())
+                                    .withReason(id)
+                                    .withFactor(entry.getTax().getPercent()
+                                                    .setScale(2).divide(new BigDecimal(100), RoundingMode.HALF_UP))
+                                    .build());
+                }
             }
         }
         return ret;
