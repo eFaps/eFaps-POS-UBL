@@ -16,7 +16,6 @@
  */
 package org.efaps.pos.ubl.service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -39,16 +38,14 @@ public class PrintListener
     }
 
     @Override
-    public Map<String, Object> getAdditionalInfo(final AbstractDocument<?> _document2print)
+    public void addAdditionalInfo2Document(final AbstractDocument<?> _document2print,
+                                           final Map<String, Object> additionalInfo)
     {
-        final var ret = new HashMap<String, Object>();
         if (_document2print instanceof Invoice || _document2print instanceof Receipt) {
             final Optional<EInvoice> eInvoice = eInvoiceRepository.findByDocId(_document2print.getId());
             if (eInvoice.isPresent()) {
-                ret.put("EInvoice-Hash", eInvoice.get().getHash());
+                additionalInfo.put("EInvoice-Hash", eInvoice.get().getHash());
             }
         }
-        return ret;
     }
-
 }
