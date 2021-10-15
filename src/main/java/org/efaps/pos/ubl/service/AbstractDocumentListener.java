@@ -117,6 +117,7 @@ public abstract class AbstractDocumentListener
         return ubl.getUBLXml();
     }
 
+    // discounts are added as a line --> convert that into a global discount
     protected List<IAllowanceChargeEntry> getAllowances(final Set<? extends IItem> items)
     {
         final var ret = new ArrayList<IAllowanceChargeEntry>();
@@ -133,6 +134,8 @@ public abstract class AbstractDocumentListener
             ret.add(AllowanceEntry.builder()
                             .withAmount(discount)
                             .withBaseAmount(total)
+                            // Catalogo 53
+                            // Descuentos globales que afectan la base imponible del IGV/IVAP
                             .withReason("02")
                             .withFactor(discount.divide(total, RoundingMode.HALF_UP))
                             .build());
