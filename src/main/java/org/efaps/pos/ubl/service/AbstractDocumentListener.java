@@ -84,7 +84,7 @@ public abstract class AbstractDocumentListener
         final var allowancesCharges = getCharges(_document.getTaxes(), false, _properties);
         allowancesCharges.addAll(getAllowances(items));
         ubl.withNumber(_document.getNumber())
-                        .withCurrency(_document.getCurrency())
+                        .withCurrency(_document.getCurrency().name())
                         .withDate(_document.getDate())
                         .withCrossTotal(_document.getCrossTotal())
                         .withNetTotal(_document.getNetTotal())
