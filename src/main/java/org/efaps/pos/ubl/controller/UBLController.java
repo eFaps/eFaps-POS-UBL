@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2021 The eFaps Team
+ * Copyright 2003 - 2022 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.efaps.pos.ubl.controller;
 import org.efaps.pos.config.IApi;
 import org.efaps.pos.entity.Config;
 import org.efaps.pos.service.DocumentService;
+import org.efaps.pos.ubl.service.CreditNoteListener;
 import org.efaps.pos.ubl.service.InvoiceListener;
 import org.efaps.pos.ubl.service.ReceiptListener;
 import org.efaps.pos.util.Converter;
@@ -40,16 +41,19 @@ public class UBLController
     private final DocumentService documentService;
     private final InvoiceListener invoiceListener;
     private final ReceiptListener receiptListener;
+    private final CreditNoteListener creditNoteListener;
 
     public UBLController(final MongoTemplate _mongoTemplate,
                          final DocumentService _documentService,
                          final InvoiceListener _invoiceListener,
-                         final ReceiptListener _receiptListener)
+                         final ReceiptListener _receiptListener,
+                         final CreditNoteListener _creditNoteListener)
     {
         mongoTemplate = _mongoTemplate;
         documentService = _documentService;
         invoiceListener = _invoiceListener;
         receiptListener = _receiptListener;
+        creditNoteListener = _creditNoteListener;
     }
 
     @GetMapping(path = "/invoice/{id}")
@@ -68,6 +72,15 @@ public class UBLController
         final var posReceipt = Converter.toDto(receipt);
         final Config config = mongoTemplate.findById(Config.KEY, Config.class);
         receiptListener.onCreate(null, posReceipt, config.getProperties());
+    }
+
+    @GetMapping(path = "/creditnote/{id}")
+    public void getCreditNote(@PathVariable("id") final String _id)
+    {
+        final var creditNote = documentService.getCreditNote(_id);
+        final var posCreditNote = Converter.toDto(creditNote);
+        final Config config = mongoTemplate.findById(Config.KEY, Config.class);
+        creditNoteListener.onCreate(null, posCreditNote, config.getProperties());
     }
 
     @PostMapping(path = "/sign", consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_XML_VALUE)

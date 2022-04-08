@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2021 The eFaps Team
+ * Copyright 2003 - 2022 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@
  */
 package org.efaps.pos.ubl;
 
+import org.efaps.pos.interfaces.ICreditNoteListener;
 import org.efaps.pos.interfaces.IInvoiceListener;
 import org.efaps.pos.interfaces.IReceiptListener;
 import org.efaps.pos.listener.IPrintListener;
 import org.efaps.pos.ubl.repository.EInvoiceRepository;
+import org.efaps.pos.ubl.service.CreditNoteListener;
 import org.efaps.pos.ubl.service.InvoiceListener;
 import org.efaps.pos.ubl.service.PrintListener;
 import org.efaps.pos.ubl.service.ReceiptListener;
@@ -57,6 +59,13 @@ public class Config
     {
         return new ReceiptListener(configProps, eInvoiceRepository);
     }
+
+    @Bean(name = { "UBL-CreditNoteListener" })
+    public ICreditNoteListener creditNoteListener()
+    {
+        return new CreditNoteListener(configProps, eInvoiceRepository);
+    }
+
 
     @Bean(name = { "UBL-PrintListener" })
     public IPrintListener printListener()
