@@ -297,7 +297,7 @@ public abstract class AbstractDocumentListener
                         .withKeyAlias(configProps.getCertificate().getKeyAlias())
                         .withKeyStorePwd(configProps.getCertificate().getKeyStorePwd())
                         .withKeyPwd(configProps.getCertificate().getKeyPwd())
-                        .signInvoice(ublXml);
+                        .signDocument(ublXml);
     }
 
     protected void store(final IDocument _document, final SignResponseDto signResponse,
