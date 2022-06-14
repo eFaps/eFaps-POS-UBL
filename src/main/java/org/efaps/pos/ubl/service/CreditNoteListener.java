@@ -50,9 +50,11 @@ public class CreditNoteListener
                         .setNumber(creditNote.getReference().getNumber())
                         .setDate(creditNote.getReference().getDate())
                         .setDocType(DocType.INVOICE.equals(creditNote.getReference().getDocType()) ? "01" : "03"));
-        final var ublXml = getUBL(creditNote, creditNote.getCreditNoteItems(), ublCreditNote, _properties);
-        LOG.info("UBL: {}", ublXml);
-        final var signResponse = sign(ublXml);
+        final var ubl = fill(creditNote, creditNote.getCreditNoteItems(), ublCreditNote, _properties);
+        ubl.withPaymentTerms(null);
+        final var xml = ubl.getUBLXml();
+        LOG.info("UBL: {}", xml);
+        final var signResponse = sign(xml);
         store(creditNote, signResponse, _properties);
         return creditNote;
     }

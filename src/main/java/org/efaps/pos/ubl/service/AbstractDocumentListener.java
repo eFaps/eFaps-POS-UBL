@@ -78,8 +78,9 @@ public abstract class AbstractDocumentListener
         return configProps;
     }
 
-    protected String getUBL(final IDocument _document, final Set<? extends IItem> items, final AbstractDocument<?> ubl,
-                            final Map<String, String> _properties)
+    protected AbstractDocument<?> fill(final IDocument _document, final Set<? extends IItem> items,
+                                       final AbstractDocument<?> ubl,
+                                       final Map<String, String> _properties)
     {
         final var allowancesCharges = getCharges(_document.getTaxes(), false, _properties);
         allowancesCharges.addAll(getAllowances(items));
@@ -114,7 +115,7 @@ public abstract class AbstractDocumentListener
                                 return null;
                             }
                         });
-        return ubl.getUBLXml();
+        return ubl;
     }
 
     // discounts are added as a line --> convert that into a global discount
@@ -135,7 +136,8 @@ public abstract class AbstractDocumentListener
                             .withAmount(discount)
                             .withBaseAmount(total)
                             // Catalogo 53
-                            // Descuentos globales que afectan la base imponible del IGV/IVAP
+                            // Descuentos globales que afectan la base imponible
+                            // del IGV/IVAP
                             .withReason("02")
                             .withFactor(discount.divide(total, RoundingMode.HALF_UP))
                             .build());

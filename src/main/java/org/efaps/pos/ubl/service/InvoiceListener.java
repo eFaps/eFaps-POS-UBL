@@ -43,7 +43,8 @@ public class InvoiceListener
     public IInvoice onCreate(final IPos _pos, final IInvoice _invoice, final Map<String, String> _properties)
     {
         final var ublInvoice = new Invoice();
-        final var ublXml = getUBL(_invoice, _invoice.getInvoiceItems(), ublInvoice, _properties);
+        final var ubl = fill(_invoice, _invoice.getInvoiceItems(), ublInvoice, _properties);
+        final var ublXml = ubl.getUBLXml();
         LOG.info("UBL: {}", ublXml);
         final var signResponse = sign(ublXml);
         store(_invoice, signResponse, _properties);
