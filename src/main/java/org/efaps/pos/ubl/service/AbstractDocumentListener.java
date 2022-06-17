@@ -34,9 +34,11 @@ import org.efaps.pos.dto.AbstractDocumentDto;
 import org.efaps.pos.dto.ContactDto;
 import org.efaps.pos.dto.PosDocItemDto;
 import org.efaps.pos.dto.TaxEntryDto;
+import org.efaps.pos.interfaces.ICreditNote;
 import org.efaps.pos.interfaces.IDocument;
 import org.efaps.pos.interfaces.IInvoice;
 import org.efaps.pos.interfaces.IItem;
+import org.efaps.pos.interfaces.IReceipt;
 import org.efaps.pos.ubl.ConfigProps;
 import org.efaps.pos.ubl.entities.AllowanceEntry;
 import org.efaps.pos.ubl.entities.ChargeEntry;
@@ -307,7 +309,16 @@ public abstract class AbstractDocumentListener
     {
         if (configProps.getOutputFolder() != null) {
             final var taxnumber = getProperty(_properties, "TaxNumber");
-            final var type = _document instanceof IInvoice ? "01" : "03";
+            final String type;
+            if (_document instanceof IInvoice) {
+                type = "01";
+            } else if (_document instanceof IReceipt) {
+                type = "03";
+            } else if (_document instanceof ICreditNote) {
+                type = "07";
+            } else {
+                type = "00";
+            }
             final var fileName = taxnumber + "-" + type + "-" + _document.getNumber() + ".xml";
             try {
                 FileUtils.writeStringToFile(new File(configProps.getOutputFolder().toString(), fileName),
