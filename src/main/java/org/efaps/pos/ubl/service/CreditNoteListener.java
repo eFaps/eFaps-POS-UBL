@@ -18,7 +18,6 @@ package org.efaps.pos.ubl.service;
 
 import java.util.Map;
 
-import org.efaps.pos.dto.DocType;
 import org.efaps.pos.interfaces.ICreditNote;
 import org.efaps.pos.interfaces.ICreditNoteListener;
 import org.efaps.pos.interfaces.IPos;
@@ -48,8 +47,7 @@ public class CreditNoteListener
         final var ublCreditNote = new CreditNote();
         ublCreditNote.withReference(new Reference()
                         .setNumber(creditNote.getReference().getNumber())
-                        .setDate(creditNote.getReference().getDate())
-                        .setDocType(DocType.INVOICE.equals(creditNote.getReference().getDocType()) ? "01" : "03"));
+                        .setDate(creditNote.getReference().getDate()));
         final var ubl = fill(creditNote, creditNote.getCreditNoteItems(), ublCreditNote, _properties);
         ubl.withPaymentTerms(null);
         final var xml = ubl.getUBLXml();
