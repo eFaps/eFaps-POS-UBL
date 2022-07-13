@@ -46,6 +46,7 @@ public class QuartzConfig
         final MethodInvokingJobDetailFactoryBean obj = new MethodInvokingJobDetailFactoryBean();
         obj.setTargetObject(syncService);
         obj.setTargetMethod("runSyncJob");
+        obj.setConcurrent(false);
         return obj;
     }
 
