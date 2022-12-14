@@ -91,6 +91,7 @@ public abstract class AbstractDocumentListener
                         .withDate(_document.getDate())
                         .withCrossTotal(_document.getCrossTotal())
                         .withNetTotal(_document.getNetTotal())
+                        .withPayableAmount(_document.getPayableAmount())
                         .withCustomer(getCustomer(_document.getContact()))
                         .withSupplier(getSupplier(_properties))
                         .withTaxes(getTaxes(_document.getTaxes(), _properties))
