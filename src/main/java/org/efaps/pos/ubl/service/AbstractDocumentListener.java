@@ -135,6 +135,10 @@ public abstract class AbstractDocumentListener
             }
         }
         if (discount.compareTo(BigDecimal.ZERO) > 0) {
+             // /Invoice/cac:InvoiceLine/cac:Allowancecharge/cbc:MultiplierFactorNumeric (Factor de cargo/descuento) --> n(3,5)
+            final var factor = discount.setScale(5, RoundingMode.HALF_UP)
+                            .divide(total, RoundingMode.HALF_UP)
+                            .setScale(5, RoundingMode.HALF_UP);
             ret.add(AllowanceEntry.builder()
                             .withAmount(discount)
                             .withBaseAmount(total)
@@ -142,7 +146,7 @@ public abstract class AbstractDocumentListener
                             // Descuentos globales que afectan la base imponible
                             // del IGV/IVAP
                             .withReason("02")
-                            .withFactor(discount.divide(total, RoundingMode.HALF_UP))
+                            .withFactor(factor)
                             .build());
         }
         return ret;
