@@ -22,10 +22,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -80,7 +80,7 @@ public abstract class AbstractDocumentListener
         return configProps;
     }
 
-    protected AbstractDocument<?> fill(final IDocument _document, final Set<? extends IItem> items,
+    protected AbstractDocument<?> fill(final IDocument _document, final Collection<? extends IItem> items,
                                        final AbstractDocument<?> ubl,
                                        final Map<String, String> _properties)
     {
@@ -122,7 +122,7 @@ public abstract class AbstractDocumentListener
     }
 
     // discounts are added as a line --> convert that into a global discount
-    protected List<IAllowanceChargeEntry> getAllowances(final Set<? extends IItem> items)
+    protected List<IAllowanceChargeEntry> getAllowances(final Collection<? extends IItem> items)
     {
         final var ret = new ArrayList<IAllowanceChargeEntry>();
         var total = BigDecimal.ZERO;
@@ -152,14 +152,12 @@ public abstract class AbstractDocumentListener
         return ret;
     }
 
-    protected List<ILine> getLines(final Set<? extends IItem> items, final Map<String, String> _properties)
+    protected List<ILine> getLines(final Collection<? extends IItem> items, final Map<String, String> _properties)
     {
         final var ret = new ArrayList<ILine>();
 
         final var docItems = items.stream()
-                        .map(item -> {
-                            return (PosDocItemDto) item;
-                        }).sorted(Comparator.comparingInt(PosDocItemDto::getIndex))
+                        .map(item -> ((PosDocItemDto) item)).sorted(Comparator.comparingInt(PosDocItemDto::getIndex))
                         .collect(Collectors.toList());
 
         for (final var item : docItems) {
@@ -181,7 +179,7 @@ public abstract class AbstractDocumentListener
         return ret;
     }
 
-    protected List<ITaxEntry> getTaxes(final Set<TaxEntryDto> taxes, final Map<String, String> _properties)
+    protected List<ITaxEntry> getTaxes(final Collection<TaxEntryDto> taxes, final Map<String, String> _properties)
     {
         final var ret = new ArrayList<ITaxEntry>();
         for (final var entry : taxes) {
@@ -216,7 +214,7 @@ public abstract class AbstractDocumentListener
         return ret;
     }
 
-    protected List<IAllowanceChargeEntry> getCharges(final Set<TaxEntryDto> taxes,
+    protected List<IAllowanceChargeEntry> getCharges(final Collection<TaxEntryDto> taxes,
                                                      final boolean isItem,
                                                      final Map<String, String> _properties)
     {
