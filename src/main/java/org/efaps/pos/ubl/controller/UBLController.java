@@ -17,13 +17,12 @@
 package org.efaps.pos.ubl.controller;
 
 import org.efaps.pos.config.IApi;
-import org.efaps.pos.entity.Config;
+import org.efaps.pos.service.ConfigService;
 import org.efaps.pos.service.DocumentService;
 import org.efaps.pos.ubl.service.CreditNoteListener;
 import org.efaps.pos.ubl.service.InvoiceListener;
 import org.efaps.pos.ubl.service.ReceiptListener;
 import org.efaps.pos.util.Converter;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,20 +35,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(IApi.BASEPATH + "ubl")
 public class UBLController
 {
-
-    private final MongoTemplate mongoTemplate;
+    private final ConfigService configService;
     private final DocumentService documentService;
     private final InvoiceListener invoiceListener;
     private final ReceiptListener receiptListener;
     private final CreditNoteListener creditNoteListener;
 
-    public UBLController(final MongoTemplate _mongoTemplate,
+    public UBLController(final ConfigService configService,
                          final DocumentService _documentService,
                          final InvoiceListener _invoiceListener,
                          final ReceiptListener _receiptListener,
                          final CreditNoteListener _creditNoteListener)
     {
-        mongoTemplate = _mongoTemplate;
+        this.configService = configService;
         documentService = _documentService;
         invoiceListener = _invoiceListener;
         receiptListener = _receiptListener;
@@ -61,8 +59,7 @@ public class UBLController
     {
         final var invoice = documentService.getInvoice(_id);
         final var posInvoice = Converter.toDto(invoice);
-        final Config config = mongoTemplate.findById(Config.KEY, Config.class);
-        invoiceListener.onCreate(null, posInvoice, config.getProperties());
+        invoiceListener.onCreate(null, posInvoice, configService.getProperties());
     }
 
     @GetMapping(path = "/receipt/{id}")
@@ -70,8 +67,7 @@ public class UBLController
     {
         final var receipt = documentService.getReceipt(_id);
         final var posReceipt = Converter.toDto(receipt);
-        final Config config = mongoTemplate.findById(Config.KEY, Config.class);
-        receiptListener.onCreate(null, posReceipt, config.getProperties());
+        receiptListener.onCreate(null, posReceipt, configService.getProperties());
     }
 
     @GetMapping(path = "/creditnote/{id}")
@@ -79,8 +75,7 @@ public class UBLController
     {
         final var creditNote = documentService.getCreditNote(_id);
         final var posCreditNote = Converter.toDto(creditNote);
-        final Config config = mongoTemplate.findById(Config.KEY, Config.class);
-        creditNoteListener.onCreate(null, posCreditNote, config.getProperties());
+        creditNoteListener.onCreate(null, posCreditNote, configService.getProperties());
     }
 
     @PostMapping(path = "/sign", consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_XML_VALUE)
