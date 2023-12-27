@@ -18,7 +18,7 @@ package org.efaps.pos.ubl.entities;
 
 import java.math.BigDecimal;
 
-import org.efaps.ubl.documents.IAllowanceEntry;
+import org.efaps.ubl.documents.interfaces.IAllowanceEntry;
 
 public class AllowanceEntry
     implements IAllowanceEntry

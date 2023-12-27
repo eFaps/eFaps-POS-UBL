@@ -43,7 +43,7 @@ public class ReceiptListener
     @Override
     public IReceipt onCreate(final IPos _pos, final IReceipt _receipt, final Map<String, String> _properties)
     {
-        final var ublReceipt = new Receipt();
+        final var ublReceipt = new Receipt().withEncoding(getConfigProps().getEncoding());
         final var ubl = fill(_receipt, _receipt.getReceiptItems(), ublReceipt, _properties);
         final var ublXml = ubl.getUBLXml();
         LOG.info("UBL: {}", ublXml);

@@ -25,7 +25,7 @@ import org.efaps.pos.interfaces.IPos;
 import org.efaps.pos.ubl.ConfigProps;
 import org.efaps.pos.ubl.repository.EInvoiceRepository;
 import org.efaps.ubl.documents.CreditNote;
-import org.efaps.ubl.documents.Reference;
+import org.efaps.ubl.documents.elements.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ public class CreditNoteListener
     @Override
     public ICreditNote onCreate(final IPos _pos, final ICreditNote creditNote, final Map<String, String> _properties)
     {
-        final var ublCreditNote = new CreditNote();
+        final var ublCreditNote = new CreditNote().withEncoding(getConfigProps().getEncoding());
         ublCreditNote.withReference(new Reference()
                         .setNumber(creditNote.getReference().getNumber())
                         .setDate(creditNote.getReference().getDate())

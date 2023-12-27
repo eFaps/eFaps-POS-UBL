@@ -40,14 +40,14 @@ public class InvoiceListener
     }
 
     @Override
-    public IInvoice onCreate(final IPos _pos, final IInvoice _invoice, final Map<String, String> _properties)
+    public IInvoice onCreate(final IPos pos, final IInvoice invoice, final Map<String, String> properties)
     {
-        final var ublInvoice = new Invoice();
-        final var ubl = fill(_invoice, _invoice.getInvoiceItems(), ublInvoice, _properties);
+        final var ublInvoice = new Invoice().withEncoding(getConfigProps().getEncoding());
+        final var ubl = fill(invoice, invoice.getInvoiceItems(), ublInvoice, properties);
         final var ublXml = ubl.getUBLXml();
         LOG.info("UBL: {}", ublXml);
         final var signResponse = sign(ublXml);
-        store(_invoice, signResponse, _properties);
-        return _invoice;
+        store(invoice, signResponse, properties);
+        return invoice;
     }
 }

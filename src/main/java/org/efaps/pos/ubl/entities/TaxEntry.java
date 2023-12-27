@@ -18,8 +18,8 @@ package org.efaps.pos.ubl.entities;
 
 import java.math.BigDecimal;
 
-import org.efaps.ubl.documents.ITaxEntry;
-import org.efaps.ubl.documents.TaxType;
+import org.efaps.ubl.documents.interfaces.ITaxEntry;
+import org.efaps.ubl.documents.values.TaxType;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 

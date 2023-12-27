@@ -16,6 +16,8 @@
  */
 package org.efaps.pos.ubl;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -31,6 +33,9 @@ public class ConfigProps
     private String ublPath;
 
     private String establecimiento;
+
+    private Charset encoding = StandardCharsets.UTF_8;
+
 
     public Certificate getCertificate()
     {
@@ -66,6 +71,16 @@ public class ConfigProps
     public void setEstablecimiento(final String establecimiento)
     {
         this.establecimiento = establecimiento;
+    }
+
+    public void setEncoding(final String encoding)
+    {
+        this.encoding = Charset.forName(encoding);
+    }
+
+    public Charset getEncoding()
+    {
+        return encoding;
     }
 
     public static class Certificate

@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -47,15 +46,15 @@ import org.efaps.pos.ubl.entities.TaxEntry;
 import org.efaps.pos.ubl.repository.EInvoiceRepository;
 import org.efaps.ubl.Signing;
 import org.efaps.ubl.documents.AbstractDocument;
-import org.efaps.ubl.documents.Customer;
-import org.efaps.ubl.documents.IAllowanceChargeEntry;
-import org.efaps.ubl.documents.ICustomer;
-import org.efaps.ubl.documents.IInstallment;
-import org.efaps.ubl.documents.ILine;
-import org.efaps.ubl.documents.IPaymentTerms;
-import org.efaps.ubl.documents.ITaxEntry;
-import org.efaps.ubl.documents.Line;
-import org.efaps.ubl.documents.Supplier;
+import org.efaps.ubl.documents.elements.Customer;
+import org.efaps.ubl.documents.elements.Line;
+import org.efaps.ubl.documents.elements.Supplier;
+import org.efaps.ubl.documents.interfaces.IAllowanceChargeEntry;
+import org.efaps.ubl.documents.interfaces.ICustomer;
+import org.efaps.ubl.documents.interfaces.IInstallment;
+import org.efaps.ubl.documents.interfaces.ILine;
+import org.efaps.ubl.documents.interfaces.IPaymentTerms;
+import org.efaps.ubl.documents.interfaces.ITaxEntry;
 import org.efaps.ubl.dto.SignResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,23 +79,23 @@ public abstract class AbstractDocumentListener
         return configProps;
     }
 
-    protected AbstractDocument<?> fill(final IDocument _document, final Collection<? extends IItem> items,
+    protected AbstractDocument<?> fill(final IDocument document, final Collection<? extends IItem> items,
                                        final AbstractDocument<?> ubl,
-                                       final Map<String, String> _properties)
+                                       final Map<String, String> properties)
     {
-        final var allowancesCharges = getCharges(_document.getTaxes(), false, _properties);
+        final var allowancesCharges = getCharges(document.getTaxes(), false, properties);
         allowancesCharges.addAll(getAllowances(items));
-        ubl.withNumber(_document.getNumber())
-                        .withCurrency(_document.getCurrency().name())
-                        .withDate(_document.getDate())
-                        .withCrossTotal(_document.getCrossTotal())
-                        .withNetTotal(_document.getNetTotal())
-                        .withPayableAmount(_document.getPayableAmount())
-                        .withCustomer(getCustomer(_document.getContact()))
-                        .withSupplier(getSupplier(_properties))
-                        .withTaxes(getTaxes(_document.getTaxes(), _properties))
+        ubl.withNumber(document.getNumber())
+                        .withCurrency(document.getCurrency().name())
+                        .withDate(document.getDate())
+                        .withCrossTotal(document.getCrossTotal())
+                        .withNetTotal(document.getNetTotal())
+                        .withPayableAmount(document.getPayableAmount())
+                        .withCustomer(getCustomer(document.getContact()))
+                        .withSupplier(getSupplier(properties))
+                        .withTaxes(getTaxes(document.getTaxes(), properties))
                         .withAllowancesCharges(allowancesCharges)
-                        .withLines(getLines(items, _properties))
+                        .withLines(getLines(items, properties))
                         .withPaymentTerms(new IPaymentTerms()
                         {
 
@@ -109,7 +108,7 @@ public abstract class AbstractDocumentListener
                             @Override
                             public BigDecimal getTotal()
                             {
-                                return _document.getCrossTotal();
+                                return document.getCrossTotal();
                             }
 
                             @Override
@@ -189,16 +188,11 @@ public abstract class AbstractDocumentListener
                 final var name = _properties.get("tax." + taxKey + ".nombre");
                 final var id = _properties.get("tax." + taxKey + ".sunat-id");
                 final var taxExemptionReasonCode = _properties.get("tax." + taxKey + ".afectacion-igv");
-                org.efaps.ubl.documents.TaxType taxType;
-                switch (entry.getTax().getType()) {
-                    case PERUNIT:
-                        taxType = org.efaps.ubl.documents.TaxType.PERUNIT;
-                        break;
-                    case ADVALOREM:
-                    default:
-                        taxType = org.efaps.ubl.documents.TaxType.ADVALOREM;
-                        break;
-                }
+                final var taxType = switch (entry.getTax().getType()) {
+                    case PERUNIT -> org.efaps.ubl.documents.values.TaxType.PERUNIT;
+                    case ADVALOREM -> org.efaps.ubl.documents.values.TaxType.ADVALOREM;
+                    default -> org.efaps.ubl.documents.values.TaxType.ADVALOREM;
+                };
                 ret.add(TaxEntry.builder()
                                 .withTaxType(taxType)
                                 .withTaxExemptionReasonCode(taxExemptionReasonCode)
@@ -245,7 +239,7 @@ public abstract class AbstractDocumentListener
         ret.setDOI(getProperty(_properties, "TaxNumber"));
         ret.setName(getProperty(_properties, "Name"));
         ret.setStreetName(getProperty(_properties, "Street"));
-        ret.setUbigeo(getProperty(_properties, "Ubigeo"));
+        ret.withGeoLocationId(getProperty(_properties, "Ubigeo"));
         ret.setCountry(getProperty(_properties, "Country"));
         ret.setAnexo(getProperty(_properties, "Establecimiento"));
         ret.setDistrict(getProperty(_properties, "District"));
@@ -254,24 +248,13 @@ public abstract class AbstractDocumentListener
 
     protected ICustomer getCustomer(final ContactDto _contactDto)
     {
-        String doiType;
-        switch (_contactDto.getIdType()) {
-            case RUC:
-                doiType = "6";
-                break;
-            case DNI:
-                doiType = "1";
-                break;
-            case CE:
-                doiType = "4";
-                break;
-            case PASSPORT:
-                doiType = "7";
-                break;
-            default:
-                doiType = "-";
-        }
-
+        final String doiType = switch (_contactDto.getIdType()) {
+            case RUC -> "6";
+            case DNI -> "1";
+            case CE -> "4";
+            case PASSPORT -> "7";
+            default -> "-";
+        };
         final Customer ret = new Customer();
         ret.setDOI(StringUtils.isEmpty(_contactDto.getIdNumber())
                         ? "0"
@@ -283,15 +266,10 @@ public abstract class AbstractDocumentListener
 
     protected String getProperty(final Map<String, String> _properties, final String _key)
     {
-        String ret;
-        switch (_key) {
-            case "Establecimiento":
-                ret = configProps.getEstablecimiento();
-                break;
-            default:
-                ret = null;
-                break;
-        }
+        String ret = switch (_key) {
+            case "Establecimiento" -> configProps.getEstablecimiento();
+            default -> null;
+        };
         if (StringUtils.isEmpty(ret)) {
             ret = _properties.get("org.efaps.commons.Company" + _key);
         }
@@ -325,7 +303,7 @@ public abstract class AbstractDocumentListener
             final var fileName = taxnumber + "-" + type + "-" + _document.getNumber() + ".xml";
             try {
                 FileUtils.writeStringToFile(new File(configProps.getOutputFolder().toString(), fileName),
-                                signResponse.getUbl(), StandardCharsets.UTF_8);
+                                signResponse.getUbl(), getConfigProps().getEncoding());
             } catch (final IOException e) {
                 LOG.error("Catched", e);
             }
