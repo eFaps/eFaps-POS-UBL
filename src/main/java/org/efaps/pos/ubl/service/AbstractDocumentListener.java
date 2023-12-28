@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2021 The eFaps Team
+ * Copyright 2003 - 2023 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,8 @@ public abstract class AbstractDocumentListener
         return configProps;
     }
 
-    protected AbstractDocument<?> fill(final IDocument document, final Collection<? extends IItem> items,
+    protected AbstractDocument<?> fill(final IDocument document,
+                                       final Collection<? extends IItem> items,
                                        final AbstractDocument<?> ubl,
                                        final Map<String, String> properties)
     {
@@ -134,7 +135,8 @@ public abstract class AbstractDocumentListener
             }
         }
         if (discount.compareTo(BigDecimal.ZERO) > 0) {
-             // /Invoice/cac:InvoiceLine/cac:Allowancecharge/cbc:MultiplierFactorNumeric (Factor de cargo/descuento) --> n(3,5)
+            // /Invoice/cac:InvoiceLine/cac:Allowancecharge/cbc:MultiplierFactorNumeric
+            // (Factor de cargo/descuento) --> n(3,5)
             final var factor = discount.setScale(5, RoundingMode.HALF_UP)
                             .divide(total, RoundingMode.HALF_UP)
                             .setScale(5, RoundingMode.HALF_UP);
@@ -151,7 +153,8 @@ public abstract class AbstractDocumentListener
         return ret;
     }
 
-    protected List<ILine> getLines(final Collection<? extends IItem> items, final Map<String, String> _properties)
+    protected List<ILine> getLines(final Collection<? extends IItem> items,
+                                   final Map<String, String> _properties)
     {
         final var ret = new ArrayList<ILine>();
 
@@ -178,7 +181,8 @@ public abstract class AbstractDocumentListener
         return ret;
     }
 
-    protected List<ITaxEntry> getTaxes(final Collection<TaxEntryDto> taxes, final Map<String, String> _properties)
+    protected List<ITaxEntry> getTaxes(final Collection<TaxEntryDto> taxes,
+                                       final Map<String, String> _properties)
     {
         final var ret = new ArrayList<ITaxEntry>();
         for (final var entry : taxes) {
@@ -264,7 +268,8 @@ public abstract class AbstractDocumentListener
         return ret;
     }
 
-    protected String getProperty(final Map<String, String> _properties, final String _key)
+    protected String getProperty(final Map<String, String> _properties,
+                                 final String _key)
     {
         String ret = switch (_key) {
             case "Establecimiento" -> configProps.getEstablecimiento();
@@ -282,10 +287,11 @@ public abstract class AbstractDocumentListener
                         .withKeyAlias(configProps.getCertificate().getKeyAlias())
                         .withKeyStorePwd(configProps.getCertificate().getKeyStorePwd())
                         .withKeyPwd(configProps.getCertificate().getKeyPwd())
-                        .signDocument(ublXml);
+                        .signDocument(ublXml, getConfigProps().getEncoding());
     }
 
-    protected void store(final IDocument _document, final SignResponseDto signResponse,
+    protected void store(final IDocument _document,
+                         final SignResponseDto signResponse,
                          final Map<String, String> _properties)
     {
         if (configProps.getOutputFolder() != null) {
