@@ -241,7 +241,7 @@ public abstract class AbstractDocumentListener
         ret.setDoiType("6");
         ret.setDOI(getProperty(_properties, "TaxNumber"));
         ret.setName(getProperty(_properties, "Name"));
-        ret.setStreetName(getProperty(_properties, "Street"));
+        ret.setAddressLine(getProperty(_properties, "Street"));
         ret.withGeoLocationId(getProperty(_properties, "Ubigeo"));
         ret.setCountry(getProperty(_properties, "Country"));
         ret.setAnexo(getProperty(_properties, "Establecimiento"));
