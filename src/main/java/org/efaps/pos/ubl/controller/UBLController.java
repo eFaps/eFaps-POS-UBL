@@ -56,7 +56,7 @@ public class UBLController
     @GetMapping(path = "/invoice/{id}")
     public void getInvoice(@PathVariable("id") final String _id)
     {
-        final var invoice = documentService.getInvoice(_id);
+        final var invoice = documentService.getInvoiceById(_id);
         final var posInvoice = Converter.toDto(invoice);
         invoiceListener.onCreate(null, posInvoice, configService.getProperties());
     }
@@ -64,7 +64,7 @@ public class UBLController
     @GetMapping(path = "/receipt/{id}")
     public void getReceipt(@PathVariable("id") final String _id)
     {
-        final var receipt = documentService.getReceipt(_id);
+        final var receipt = documentService.getReceiptById(_id);
         final var posReceipt = Converter.toDto(receipt);
         receiptListener.onCreate(null, posReceipt, configService.getProperties());
     }
@@ -72,7 +72,7 @@ public class UBLController
     @GetMapping(path = "/creditnote/{id}")
     public void getCreditNote(@PathVariable("id") final String _id)
     {
-        final var creditNote = documentService.getCreditNote(_id);
+        final var creditNote = documentService.getCreditNoteById(_id);
         final var posCreditNote = Converter.toDto(creditNote);
         creditNoteListener.onCreate(null, posCreditNote, configService.getProperties());
     }

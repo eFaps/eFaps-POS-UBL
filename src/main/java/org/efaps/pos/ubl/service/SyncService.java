@@ -21,7 +21,7 @@ import org.efaps.pos.client.EFapsClient;
 import org.efaps.pos.config.ConfigProperties;
 import org.efaps.pos.config.ConfigProperties.Company;
 import org.efaps.pos.context.Context;
-import org.efaps.pos.service.DocumentService;
+import org.efaps.pos.service.DocumentHelperService;
 import org.efaps.pos.ubl.ConfigProps;
 import org.efaps.pos.ubl.dtos.EInvoiceDto;
 import org.efaps.pos.ubl.entities.EInvoice;
@@ -45,19 +45,19 @@ public class SyncService
     private final ConfigProperties configProperties;
     private final EInvoiceRepository eInvoiceRepository;
     private final EFapsClient eFapsClient;
-    private final DocumentService documentService;
+    private final DocumentHelperService documentHelperService;
 
     public SyncService(final ConfigProps localConfigProps,
                        final ConfigProperties configProperties,
                        final EInvoiceRepository eInvoiceRepository,
                        final EFapsClient eFapsClient,
-                       final DocumentService documentService)
+                       final DocumentHelperService documentHelperService)
     {
         this.localConfigProps = localConfigProps;
         this.configProperties = configProperties;
         this.eInvoiceRepository = eInvoiceRepository;
         this.eFapsClient = eFapsClient;
-        this.documentService = documentService;
+        this.documentHelperService = documentHelperService;
     }
 
     public void runSyncJob()
@@ -103,7 +103,7 @@ public class SyncService
 
     private Optional<String> getDocOid(final EInvoice eInvoice)
     {
-        final var doc = documentService.getDocument(eInvoice.getDocId());
-        return doc == null ? Optional.empty() : Optional.ofNullable(doc.getOid());
+        final var doc = documentHelperService.getDocument(eInvoice.getDocId());
+        return doc.isEmpty() ? Optional.empty() : Optional.ofNullable(doc.get().getOid());
     }
 }
