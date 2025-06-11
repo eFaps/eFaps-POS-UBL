@@ -27,6 +27,7 @@ import org.efaps.pos.ubl.dtos.EInvoiceDto;
 import org.efaps.pos.ubl.entities.EInvoice;
 import org.efaps.pos.ubl.repository.EInvoiceRepository;
 import org.efaps.pos.util.IdentException;
+import org.efaps.pos.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -90,7 +91,7 @@ public class SyncService
                     final ResponseEntity<String> response = eFapsClient.getRestTemplate().exchange(requestEntity,
                                     String.class);
                     final var oid = response.getBody();
-                    if (oid != null) {
+                    if (Utils.isOid(oid)) {
                         eInvoice.setOid(oid);
                         eInvoiceRepository.save(eInvoice);
                     }
