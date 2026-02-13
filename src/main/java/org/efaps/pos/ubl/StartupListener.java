@@ -15,6 +15,9 @@
  */
 package org.efaps.pos.ubl;
 
+import java.util.Map;
+
+import org.efaps.pos.listener.IVersionListener;
 import org.efaps.ubl.Signing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +30,7 @@ import org.springframework.stereotype.Component;
 @Component("UBL-StartupListener")
 @PropertySource(value = "classpath:ubl.properties")
 public class StartupListener
-    implements ApplicationListener<ApplicationReadyEvent>
+    implements ApplicationListener<ApplicationReadyEvent>, IVersionListener
 {
     @Value("${ubl.version}")
     private String version;
@@ -55,5 +58,11 @@ public class StartupListener
         } else {
             LOG.warn("Problems with the Certificate");
         }
+    }
+
+    @Override
+    public void add2Versions(Map<String, String> map)
+    {
+        map.put("POS-UBL", version);
     }
 }
