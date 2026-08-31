@@ -15,7 +15,7 @@
  */
 package org.efaps.pos.ubl.dtos;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(builder = EInvoiceDto.Builder.class)
 public class EInvoiceDto

@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import org.efaps.ubl.documents.interfaces.ITaxEntry;
 import org.efaps.ubl.documents.values.TaxType;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(builder = TaxEntry.Builder.class)
 public class TaxEntry
